@@ -1,32 +1,29 @@
+notifications:
+  email:
+    on_success: change
+    on_failure: always
 language: python
-branches:
-    only:
-        - master
+sudo: true
 python:
-    - "2.7"
-    - "3.4"
-    - "3.5"
+  - 3.6
+  - 3.5
+  - 3.4
+  - 2.7
 addons:
-    apt:
-        sources:
-        - ubuntu-toolchain-r-test
-        packages:
-        - gcc-4.8
-        - libsnappy-dev
-        - realpath
+   apt:
+      packages:
+      - curl autoconf automake libtool python-dev pkg-config
+before_install:
+  - sudo apt-get install curl autoconf automake libtool python-dev pkg-config
+  - git clone https://github.com/openvenues/libpostal
+  - cd libpostal
+  - ./bootstrap.sh
+  - ./configure --datadir=.
+  - sudo make
+  - sudo make install
+  - sudo ldconfig
+  - cd ..
 install:
-    - export CC="gcc-4.8"
-    - mkdir deps
-    - git clone https://github.com/openvenues/libpostal
-    - cd libpostal
-    - ./bootstrap.sh
-    - ./configure --datadir=$(pwd)/data --prefix=$(realpath $(pwd)/../deps) --bindir=$(realpath $(pwd)/../deps)
-    - make install
-    - cd ..
-    - export CFLAGS=-I$(pwd)/deps/include
-    - export LDFLAGS=-L$(pwd)/deps/lib
-    - python setup.py install
-    - python setup.py build_ext --inplace
+  - pip install -e .
 script:
-    - export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$(pwd)/deps/lib
-    - nosetests postal/tests
+  - nosetests postal/tests
