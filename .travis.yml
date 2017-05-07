@@ -9,16 +9,12 @@ python:
   - 3.5
   - 3.4
   - 2.7
-addons:
-   apt:
-      packages:
-      - curl autoconf automake libtool python-dev pkg-config
 before_install:
   - sudo apt-get install curl autoconf automake libtool python-dev pkg-config
   - git clone https://github.com/openvenues/libpostal
   - cd libpostal
   - ./bootstrap.sh
-  - ./configure --datadir=.
+  - ./configure --datadir=/tmp
   - sudo make
   - sudo make install
   - sudo ldconfig
